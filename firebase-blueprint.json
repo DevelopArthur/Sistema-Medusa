@@ -1,0 +1,106 @@
+{
+  "entities": {
+    "Case": {
+      "title": "Case",
+      "description": "An ongoing investigation record or alert case escalation",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "target": { "type": "string" },
+        "description": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["active", "under_review", "escalated", "closed"]
+        },
+        "riskScore": { "type": "number" },
+        "riskLevel": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "assignedTo": { "type": "string" },
+        "associatedValue": { "type": "string" }
+      },
+      "required": ["id", "name", "target", "description", "status", "riskScore", "riskLevel", "createdAt", "updatedAt", "assignedTo", "associatedValue"]
+    },
+    "Alert": {
+      "title": "Alert",
+      "description": "An automated suspicious pattern alert",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string" },
+        "source": { "type": "string" },
+        "targetEntity": { "type": "string" },
+        "riskLevel": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "dismissed", "escalated"]
+        },
+        "detectedAt": { "type": "string" },
+        "patternDetected": { "type": "boolean" },
+        "description": { "type": "string" }
+      },
+      "required": ["id", "type", "source", "targetEntity", "riskLevel", "status", "detectedAt", "patternDetected", "description"]
+    },
+    "Entity": {
+      "title": "Entity",
+      "description": "A financial player, company, trust or individual under review",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["individual", "account", "company", "trust"]
+        },
+        "riskLevel": {
+          "type": "string",
+          "enum": ["low", "medium", "high"]
+        },
+        "riskScore": { "type": "number" },
+        "flagged": { "type": "boolean" },
+        "avatar": { "type": "string" }
+      },
+      "required": ["id", "name", "type", "riskLevel", "riskScore", "flagged"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "A message record in the AI Analyst assistant chat logs",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "sender": {
+          "type": "string",
+          "enum": ["user", "system", "ai"]
+        },
+        "text": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["id", "sender", "text", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/cases/{caseId}": {
+      "schema": "Case",
+      "description": "Collection of investigation cases"
+    },
+    "/alerts/{alertId}": {
+      "schema": "Alert",
+      "description": "Collection of transactional system alerts"
+    },
+    "/entities/{entityId}": {
+      "schema": "Entity",
+      "description": "Collection of financial and physical entities catalogued"
+    },
+    "/chat_messages/{messageId}": {
+      "schema": "ChatMessage",
+      "description": "Historical message logs exchanged with the AI Analyst assistant"
+    }
+  }
+}

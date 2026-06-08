@@ -1,0 +1,106 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return isSignedIn() && (request.auth.token.email_verified == true || request.auth.uid != null);
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Schema Validation Helpers
+    function isValidCase(data) {
+      return data.keys().hasAll(['id', 'name', 'target', 'description', 'status', 'riskScore', 'riskLevel', 'createdAt', 'updatedAt', 'assignedTo', 'associatedValue'])
+        && data.keys().size() == 11
+        && data.id is string && data.id.size() <= 64
+        && data.name is string && data.name.size() <= 128
+        && data.target is string && data.target.size() <= 128
+        && data.description is string && data.description.size() <= 2048
+        && data.status in ['active', 'under_review', 'escalated', 'closed']
+        && data.riskScore is number && data.riskScore >= 0 && data.riskScore <= 100
+        && data.riskLevel in ['low', 'medium', 'high']
+        && data.createdAt is string && data.createdAt.size() <= 64
+        && data.updatedAt is string && data.updatedAt.size() <= 64
+        && data.assignedTo is string && data.assignedTo.size() <= 128
+        && data.associatedValue is string && data.associatedValue.size() <= 64;
+    }
+
+    function isValidAlert(data) {
+      return data.keys().hasAll(['id', 'type', 'source', 'targetEntity', 'riskLevel', 'status', 'detectedAt', 'patternDetected', 'description'])
+        && data.keys().size() == 9
+        && data.id is string && data.id.size() <= 64
+        && data.type is string && data.type.size() <= 128
+        && data.source is string && data.source.size() <= 128
+        && data.targetEntity is string && data.targetEntity.size() <= 128
+        && data.riskLevel in ['low', 'medium', 'high']
+        && data.status in ['pending', 'dismissed', 'escalated']
+        && data.detectedAt is string && data.detectedAt.size() <= 64
+        && data.patternDetected is bool
+        && data.description is string && data.description.size() <= 2048;
+    }
+
+    function isValidEntity(data) {
+      return data.keys().hasAll(['id', 'name', 'type', 'riskLevel', 'riskScore', 'flagged', 'avatar', 'metadata'])
+        && data.keys().size() == 8
+        && data.id is string && data.id.size() <= 64
+        && data.name is string && data.name.size() <= 128
+        && data.type in ['individual', 'account', 'company', 'trust']
+        && data.riskLevel in ['low', 'medium', 'high']
+        && data.riskScore is number && data.riskScore >= 0 && data.riskScore <= 100
+        && data.flagged is bool
+        && data.avatar is string && data.avatar.size() <= 32;
+    }
+
+    function isValidChatMessage(data) {
+      return data.keys().hasAll(['id', 'sender', 'text', 'timestamp'])
+        && data.keys().size() == 4
+        && data.id is string && data.id.size() <= 64
+        && data.sender in ['user', 'system', 'ai']
+        && data.text is string && data.text.size() <= 4096
+        && data.timestamp is string && data.timestamp.size() <= 64;
+    }
+
+    // Rules for Cases
+    match /cases/{caseId} {
+      allow read: if isSignedIn();
+      allow create: if isEmailVerified() && isValidId(caseId) && isValidCase(request.resource.data);
+      allow update: if isEmailVerified() && isValidId(caseId) && isValidCase(request.resource.data);
+      allow delete: if isEmailVerified() && isValidId(caseId);
+    }
+
+    // Rules for Alerts
+    match /alerts/{alertId} {
+      allow read: if isSignedIn();
+      allow create: if isEmailVerified() && isValidId(alertId) && isValidAlert(request.resource.data);
+      allow update: if isEmailVerified() && isValidId(alertId) && isValidAlert(request.resource.data);
+      allow delete: if isEmailVerified() && isValidId(alertId);
+    }
+
+    // Rules for Entities
+    match /entities/{entityId} {
+      allow read: if isSignedIn();
+      allow create: if isEmailVerified() && isValidId(entityId) && isValidEntity(request.resource.data);
+      allow update: if isEmailVerified() && isValidId(entityId) && isValidEntity(request.resource.data);
+      allow delete: if isEmailVerified() && isValidId(entityId);
+    }
+
+    // Rules for Chat Messages
+    match /chat_messages/{messageId} {
+      allow read: if isSignedIn();
+      allow create: if isEmailVerified() && isValidId(messageId) && isValidChatMessage(request.resource.data);
+      allow update: if isEmailVerified() && isValidId(messageId) && isValidChatMessage(request.resource.data);
+      allow delete: if isEmailVerified() && isValidId(messageId);
+    }
+  }
+}

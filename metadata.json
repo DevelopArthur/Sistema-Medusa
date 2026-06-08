@@ -1,0 +1,8 @@
+{
+  "name": "Obsidian Vigilance",
+  "description": "Unidade de Inteligência Investigativa de Crimes Financeiros e Lavagem de Capitais",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

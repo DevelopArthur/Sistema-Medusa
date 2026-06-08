@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Zilla+Slab:wght@700&family=Arvo:wght@700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  /* Obsidian Vigilance Forest-Chromatic Palette */
+  --color-primary: #003526;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #0f4d3a;
+  --color-on-primary-container: #83bda4;
+  --color-secondary: #3f6658;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #c1ecda;
+  
+  --color-background: #f9f9fb;
+  --color-on-background: #1a1c1d;
+  --color-surface: #f9f9fb;
+  --color-card-bg: #ffffff;
+  --color-border: #e5e5e7;
+  
+  /* Risk Indicators */
+  --color-risk-high: #ba1a1a;
+  --color-risk-medium: #f57c00;
+  --color-risk-low: #1e7d5d;
+  
+  /* Text Styles */
+  --color-text-primary: #1D1D1F;
+  --color-text-secondary: #6E6E73;
+  
+  /* Typography Configuration */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-logo: "Zilla Slab", "Arvo", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  
+  /* Sizing and borders */
+  --radius-brand: 0.5rem; /* 8px default radius */
+  --radius-btn: 3px; /* Precise buttons */
+}
+
+/* Custom global patterns */
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tabular sizing utility for financial figures */
+.font-tab-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Elegant glassmorphic background layer */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid #e5e5e7;
+}
+
+.dark-glass-panel {
+  background: rgba(15, 77, 58, 0.9);
+  backdrop-filter: blur(12px);
+  color: #ffffff;
+}
+
+/* Scrollbar tweaks */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #e2e2e4;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #d1d1d6;
+}
+
+/* Organic slow-pulsing state scanner for the Medusa Eye */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.96); }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  transform-origin: center;
+}
